@@ -1,0 +1,33 @@
+{
+    "name": "juniyadi/laravel-github-api",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "JuniYadi\\GitHub\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JuniYadi\\GitHub\\Providers\\GithubServiceProvider"
+            ],
+            "aliases": {
+                "Github": "JuniYadi\\GitHub\\Facades\\Github"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "JuniYadi",
+            "email": "juniyadi94@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^12.0",
+        "illuminate/http": "^12.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.22"
+    }
+}
