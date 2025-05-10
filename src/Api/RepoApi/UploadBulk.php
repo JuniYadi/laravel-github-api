@@ -43,23 +43,23 @@ trait UploadBulk
     /**
      * Upload multiple files to a repository using Git Data API (blobs/trees/commits).
      *
-     * @param string $repo
-     * @param string $branch
-     * @param array $files Array of ['file' => ..., 'content' => ...]
-     * @param string $message
+     * @param  string  $repo
+     * @param  string  $branch
+     * @param  array  $files  Array of ['file' => ..., 'content' => ...]
+     * @param  string  $message
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
      */
-    public function uploadBulkBlob($repo, $branch = 'main', array $files, $message = 'Bulk upload')
+    public function uploadBulkBlob($repo, $branch, array $files, $message = 'Bulk upload')
     {
         if (empty($repo)) {
             throw new \InvalidArgumentException('Repository cannot be empty.');
         }
-        if (!is_array($files) || empty($files)) {
+        if (! is_array($files) || empty($files)) {
             throw new \InvalidArgumentException('Files array cannot be empty.');
         }
-        
+
         // 1. Get the latest commit SHA on the branch
         $ref = $this->req->get("/repos/{$repo}/git/ref/heads/{$branch}");
         if ($ref->failed()) {
@@ -73,17 +73,17 @@ trait UploadBulk
             throw new \Exception('Failed to get commit.');
         }
         $baseTreeSha = $commit->json()['tree']['sha'];
-        
+
         // Track if any files have changed
         $hasChanges = false;
-        
+
         // 3. Create blobs for each file
         $tree = [];
         foreach ($files as $fileData) {
-            if (!isset($fileData['file'], $fileData['content'])) {
+            if (! isset($fileData['file'], $fileData['content'])) {
                 throw new \InvalidArgumentException('Each file must have file and content keys.');
             }
-            
+
             // Check if file exists and if content has changed
             $fileChanged = true;
             try {
@@ -106,7 +106,7 @@ trait UploadBulk
                 // File doesn't exist yet, so it's a new file
                 $fileChanged = true;
             }
-            
+
             // Only create a blob if the file is new or has changed
             if ($fileChanged) {
                 $hasChanges = true;
@@ -114,11 +114,11 @@ trait UploadBulk
                     'content' => $fileData['content'],
                     'encoding' => 'utf-8',
                 ]);
-                
+
                 if ($blob->failed()) {
-                    throw new \Exception('Failed to create blob for file: ' . $fileData['file']);
+                    throw new \Exception('Failed to create blob for file: '.$fileData['file']);
                 }
-                
+
                 $tree[] = [
                     'path' => $fileData['file'],
                     'mode' => '100644',
@@ -127,9 +127,9 @@ trait UploadBulk
                 ];
             }
         }
-        
+
         // If no files have changed, return early
-        if (!$hasChanges) {
+        if (! $hasChanges) {
             return [
                 'success' => true,
                 'message' => 'No changes detected. Skipping commit.',
@@ -143,12 +143,12 @@ trait UploadBulk
             'base_tree' => $baseTreeSha,
             'tree' => $tree,
         ]);
-        
+
         if ($newTree->failed()) {
             throw new \Exception('Failed to create tree.');
         }
         $newTreeSha = $newTree->json()['sha'];
-        
+
         // If the new tree SHA matches the base tree SHA, no changes were made
         if ($newTreeSha === $baseTreeSha) {
             return [
@@ -165,7 +165,7 @@ trait UploadBulk
             'tree' => $newTreeSha,
             'parents' => [$commitSha],
         ]);
-        
+
         if ($newCommit->failed()) {
             throw new \Exception('Failed to create commit.');
         }
@@ -175,7 +175,7 @@ trait UploadBulk
         $updateRef = $this->req->patch("/repos/{$repo}/git/refs/heads/{$branch}", [
             'sha' => $newCommitSha,
         ]);
-        
+
         if ($updateRef->failed()) {
             throw new \Exception('Failed to update branch reference.');
         }

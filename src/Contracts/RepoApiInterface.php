@@ -8,7 +8,6 @@ interface RepoApiInterface
      * List repositories for a user.
      *
      * @param  string  $username
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
@@ -19,7 +18,6 @@ interface RepoApiInterface
      * List branches for a repository.
      *
      * @param  string  $repo
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
@@ -31,7 +29,6 @@ interface RepoApiInterface
      *
      * @param  string  $repo
      * @param  string|null  $file
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
@@ -44,7 +41,6 @@ interface RepoApiInterface
      * @param  string  $repo
      * @param  string  $file
      * @param  string  $message
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
@@ -58,23 +54,21 @@ interface RepoApiInterface
      * @param  string  $file
      * @param  string  $message
      * @param  string  $content
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
      */
     public function upload($repo, $file, $message, $content, array $options = []);
-    
+
     /**
      * Upload multiple files to a repository.
      *
      * @param  string  $repo
      * @param  array  $files  Array of ['file' => ..., 'content' => ..., 'message' => ...]
-     * @param  array  $options
      * @return array
      */
     public function uploadBulk($repo, array $files, array $options = []);
-    
+
     /**
      * Upload multiple files to a repository using Git Data API (blobs/trees/commits).
      *
@@ -85,19 +79,18 @@ interface RepoApiInterface
      * @return array
      */
     public function uploadBulkBlob($repo, $branch, array $files, $message);
-    
+
     /**
      * Delete multiple files from a repository.
      *
      * @param  string  $repo
      * @param  array  $files  Array of ['file' => ..., 'message' => ...]
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception
      */
     public function deleteBulk($repo, array $files, array $options = []);
-    
+
     /**
      * Delete multiple files or directories from a repository using Git Data API.
      *
@@ -105,7 +98,6 @@ interface RepoApiInterface
      * @param  string  $branch
      * @param  array  $files  Array of file paths or directory paths to delete
      * @param  string  $message
-     * @param  array  $options
      * @return array
      *
      * @throws \InvalidArgumentException|\Exception

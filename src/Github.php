@@ -16,7 +16,6 @@ class Github
 
     protected $orgApi;
 
-
     public function __construct()
     {
         $this->userApi = new UserApi;
